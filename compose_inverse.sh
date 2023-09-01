@@ -1,7 +1,6 @@
 #!/bin/bash
 
-python baseline_main_nobar.py --gpu 0 --seed 0 --eigen 18 &
-sleep 10
+python baseline_main_nobar.py --gpu 0 --seed 0 --eigen 18
 #python baseline_main_nobar.py --gpu 1 --seed 1 --eigen 18 &
 #sleep 10
 #python baseline_main_nobar.py --gpu 2 --seed 0 --eigen 28 &
