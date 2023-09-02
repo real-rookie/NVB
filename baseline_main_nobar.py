@@ -48,7 +48,7 @@ transform_test = transforms.Compose([
     transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
 ])
 
-
+# test_32x32.mat
 svhn = torchvision.datasets.SVHN(
     root='./data',
     split='test', 
@@ -63,6 +63,8 @@ svhn_loader = torch.utils.data.DataLoader(
     worker_init_fn= _init_fn
     )
 
+# cifar-10-python.tar.gz  cifar-10-batches-py
+# train with the blurred training data
 trainset = CIFAR20(
     root='./data',
     train=True, 
@@ -77,7 +79,8 @@ trainloader = torch.utils.data.DataLoader(
     num_workers=2, 
     worker_init_fn = _init_fn
     )
-
+# cifar-10-python.tar.gz  cifar-10-batches-py
+# test with the unblurred test data
 testset = torchvision.datasets.CIFAR10(
     root='./data', 
     train=False, 
@@ -131,9 +134,10 @@ if device == 'cuda':
 
 def train(epoch):
     print('\nEpoch: %d' % epoch)
-    net.train()
-    net2.eval()
-    net3.eval()
+    net.train() # f
+    net2.eval() # g2
+    net3.eval() # g3
+    # net2 and net3 have the same eigenvalue
     train_loss = 0
     lr_epoch = 1e-4
   
@@ -142,17 +146,23 @@ def train(epoch):
     optimizer = optim.Adam(net.parameters(), lr=lr_epoch)
     for batch_idx, (inputs, targets) in enumerate(trainloader):
         inputs, targets = inputs.to(device), targets.to(device)
+        # inputs.shape = [128, 3, 32, 32]
+        # targets.shape = [128]
         optimizer.zero_grad()
         batch_size= targets.size(0)
-        inputs = Variable(inputs, requires_grad=True)
-        outputs = net(inputs)
-        outputs3,_ = net2(inputs)
-        outputs5,_ = net3(inputs)
+        inputs = Variable(inputs, requires_grad=True) # why requires_grad = True?
+        outputs = net(inputs)     # f(x')  shape = [batch_size(128), 512]
+        outputs3,_ = net2(inputs) # g2(x') shape = [batch_size(128), 512]
+        outputs5,_ = net3(inputs) # g3(x') shape = [batch_size(128), 512]
+        print(outputs3 - outputs5)
         outputs3 = outputs3.data.cpu().numpy()
         outputs5 = outputs5.data.cpu().numpy()
         outputs4 = np.reshape(np.vstack([outputs3,outputs5]), [2,batch_size,512])
-        outputs6 = np.zeros([batch_size,512])
+        # outputs4.shape = (2, 128, 512)
+        outputs6 = np.zeros([batch_size,512]) # np.shape = [128, 512]
         for i in range(batch_size):
+            # cannot run, index is float
+            # what is this line trying to do?
             outputs6[i,:] = outputs4[targets[i].data.cpu().numpy(),i,:]
         outputs6 = torch.cuda.FloatTensor(outputs6)
         loss1 = torch.sum(torch.abs(outputs-outputs6) ** 2 , 1)
