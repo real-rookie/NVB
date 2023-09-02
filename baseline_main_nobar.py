@@ -49,22 +49,73 @@ transform_test = transforms.Compose([
 ])
 
 
-svhn = torchvision.datasets.SVHN(root='./data',split='test', download=True, transform = transform_test)
-svhn_loader = torch.utils.data.DataLoader(dataset= svhn, batch_size=100, shuffle=False, num_workers=1,worker_init_fn= _init_fn)
+svhn = torchvision.datasets.SVHN(
+    root='./data',
+    split='test', 
+    download=True, 
+    transform = transform_test
+    )
+svhn_loader = torch.utils.data.DataLoader(
+    dataset= svhn, 
+    batch_size=100, 
+    shuffle=False, 
+    num_workers=1,
+    worker_init_fn= _init_fn
+    )
 
-trainset = CIFAR20(root='./data', train=True, download=True, transform=transform_test,reduce_eigenvalue=args.eigen)
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=128, shuffle=True, num_workers=2, worker_init_fn = _init_fn)
+trainset = CIFAR20(
+    root='./data',
+    train=True, 
+    download=True, 
+    transform=transform_test,
+    reduce_eigenvalue=args.eigen
+    )
+trainloader = torch.utils.data.DataLoader(
+    trainset, 
+    batch_size=128, 
+    shuffle=True, 
+    num_workers=2, 
+    worker_init_fn = _init_fn
+    )
 
-testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
-testloader = torch.utils.data.DataLoader(testset, batch_size=100, shuffle=False, num_workers=1,worker_init_fn = _init_fn)
+testset = torchvision.datasets.CIFAR10(
+    root='./data', 
+    train=False, 
+    download=True, 
+    transform=transform_test
+    )
+testloader = torch.utils.data.DataLoader(
+    testset, 
+    batch_size=100, 
+    shuffle=False, 
+    num_workers=1,
+    worker_init_fn = _init_fn
+    )
 
-classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+classes = ('plane', 'car', 'bird', 'cat', 'deer', 
+           'dog', 'frog', 'horse', 'ship', 'truck')
 
-lsun = datasets.ImageFolder("./data/LSUN_resize/",transform=transform_test)
-lsun_loader = DataLoader(dataset = lsun, batch_size= 100, shuffle=False, worker_init_fn = _init_fn)
+lsun = datasets.ImageFolder(
+    "./data/LSUN_resize/",
+    transform=transform_test
+    )
+lsun_loader = DataLoader(
+    dataset = lsun, 
+    batch_size= 100, 
+    shuffle=False, 
+    worker_init_fn = _init_fn
+    )
 
-timagenet = datasets.ImageFolder("./data/Imagenet_resize/",transform=transform_test)
-timagenet_loader = DataLoader(dataset = timagenet, batch_size=100, shuffle=False, worker_init_fn = _init_fn)  
+timagenet = datasets.ImageFolder(
+    "./data/Imagenet_resize/"
+    ,transform=transform_test
+    )
+timagenet_loader = DataLoader(
+    dataset = timagenet, 
+    batch_size=100, 
+    shuffle=False, 
+    worker_init_fn = _init_fn
+    )  
 # Model
 print('==> Building model..')
 net = ResNet345()
